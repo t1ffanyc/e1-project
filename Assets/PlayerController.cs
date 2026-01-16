@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float speed = 5.0f;
     Rigidbody2D rb;
     bool isGrounded;
+    int score = 0;
 
     void Start()
     {
@@ -50,6 +51,16 @@ public class PlayerController : MonoBehaviour
         if(collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = false;
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.gameObject.CompareTag("Collectible"))
+        {
+            score++;
+            collision.gameObject.SetActive(false);
+            Debug.Log("Score: " + score);
         }
     }
 }
