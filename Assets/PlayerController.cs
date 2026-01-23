@@ -11,7 +11,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float jumpForce = 100;
     bool isGrounded;
     bool isDashing;
+    bool isJumping;
     int score = 0;
+    int jumps = 0;
 
     Rigidbody2D rb;
     Animator animator;
@@ -54,10 +56,19 @@ public class PlayerController : MonoBehaviour
             rb.linearVelocity = new Vector2(movementX * speed, rb.linearVelocity.y);
         }
 
-        if (movementY > 0 && isGrounded)
+        if (movementY > 0 && jumps < 2 && !isJumping)
         {
+            isJumping = true;
             rb.AddForce(new Vector2(0, jumpForce));
+            jumps++;
+            Debug.Log("jumps: " + jumps);
+            Invoke(nameof(EndJump), 0.30f);
         }
+    }
+
+    void EndJump()
+    {
+        isJumping = false;
     }
 
     void OnMove(InputValue value)
@@ -94,6 +105,7 @@ public class PlayerController : MonoBehaviour
         if(collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
+            jumps = 0;
         }
     }
 
