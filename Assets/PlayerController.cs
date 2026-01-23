@@ -8,14 +8,20 @@ public class PlayerController : MonoBehaviour
     float movementY;
     [SerializeField] float speed = 5.0f;
     [SerializeField] float dashForce = 12f;
-    Rigidbody2D rb;
+    [SerializeField] float jumpForce = 100;
     bool isGrounded;
     bool isDashing;
     int score = 0;
 
+    Rigidbody2D rb;
+    Animator animator;
+    SpriteRenderer spriteRenderer;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -24,6 +30,25 @@ public class PlayerController : MonoBehaviour
         // float movementDistanceX = movementX * speed * Time.deltaTime;
         // float movementDistanceY = movementY * speed * Time.deltaTime;
         // transform.position = new Vector2(transform.position.x + movementDistanceX, transform.position.y + movementDistanceY);
+        if(!Mathf.Approximately(movementX, 0f))
+        {
+            animator.SetBool("isRunning", true);
+            spriteRenderer.flipX = movementX < 0;
+        }
+        else
+        {
+            animator.SetBool("isRunning", false);
+        }
+
+        if(isGrounded)
+        {
+            animator.SetBool("isJumping", false);
+        }
+        else
+        {
+            animator.SetBool("isJumping", true);
+        }
+
         if (!isDashing)
         {
             rb.linearVelocity = new Vector2(movementX * speed, rb.linearVelocity.y);
@@ -31,7 +56,7 @@ public class PlayerController : MonoBehaviour
 
         if (movementY > 0 && isGrounded)
         {
-            rb.AddForce(new Vector2(0, 100));
+            rb.AddForce(new Vector2(0, jumpForce));
         }
     }
 
